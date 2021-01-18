@@ -11,7 +11,7 @@ app.config['UPLOAD_PATH'] = 'uploads'
 
 con = psycopg2.connect(
             host = "postgres://hvwpzudqeymcjf:569a4dab362b9a8bdb8ced8cf3dd2e861fa0df0c3c23e52f6abc83af24f8b61f@ec2-79-125-77-37.eu-west-1.compute.amazonaws.com:5432/d7ru15emksfgkr",
-            database="mydb",
+            database="DATABASE_URL",
             user = "postgres",
             password = "postgres")
 cur = con.cursor()
