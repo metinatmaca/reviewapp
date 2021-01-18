@@ -51,7 +51,7 @@ def login():
 		cur.execute("SELECT user_id FROM users WHERE useremail LIKE \'{0}\' AND password = \'{1}\'".format(email,password))
 		global user_id
 		user_id = cur.fetchall()
-		if(!user_id):
+		if(user_id):
 			if (user_id == 4):
 				global admin
 				admin = 1
