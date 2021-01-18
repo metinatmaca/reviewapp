@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for
 from werkzeug.utils import secure_filename
 import os
 import psycopg2
+import urllib.parse as urlparse
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'totallysecretkey'
