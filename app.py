@@ -111,10 +111,10 @@ def submit():
 			file_ext = os.path.splitext(filename)[1]
 			if file_ext not in app.config['UPLOAD_EXTENSIONS']:
 				return render_template('success.html')
-		imagename.save(os.path.join(app.config['UPLOAD_PATH'], filename))
-		path = os.path.join(app.config['UPLOAD_PATH'], filename)
-		cur.execute("INSERT INTO images(imagestore,review_id,product_id) VALUES('{0}','{1}','{2}')".format(path,r_id[0][0],p_id[0][0]))
-		con.commit()
+			imagename.save(os.path.join(app.config['UPLOAD_PATH'], filename))
+			path = os.path.join(app.config['UPLOAD_PATH'], filename)
+			cur.execute("INSERT INTO images(imagestore,review_id,product_id) VALUES('{0}','{1}','{2}')".format(path,r_id[0][0],p_id[0][0]))
+			con.commit()
 		return render_template('success.html')
 		# if db.session.query(Feedback).filter(Feedback.customer == customer).count() == 0:
 			# data = Feedback(customer, dealer, rating, comments)
