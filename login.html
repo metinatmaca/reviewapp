@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="../static/style.css" />
+    <title>Login</title>
+  </head>
+  <body>
+    <div class="container">
+      <img src="../static/logo.png" alt="" class="logo" />
+      <form class = "form-signin" method = "POST" action = "/login">
+		  <h2 class = "form-signin-heading">Please log in</h2>
+			 <label for="inputUsername" class="sr-only">Email</label>
+				<input type="text" id="inputUsername" name="userem" class="form-control" required autofocus>
+				<label for="inputPassword" class="sr-only">Password</label>
+				<input type="password" id="inputPassword" name ="userpass" class="form-control" required>
+				<div class="checkbox">
+		  <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+      </form>
+      <a href="/">Not a member? Sign up.</a>
+    </div>
+  </body>
+</html>
