@@ -39,7 +39,7 @@ def signup():
 		con.commit()
 		cur.execute("SELECT user_id FROM users WHERE useremail LIKE \'{0}\'".format(email))
 		global user_id
-		user_id =cur.fetchall()[0][0]
+		user_id =cur.fetchall()[0]
 		global admin
 		return redirect(url_for('dashboard',admin=admin))
 	return render_template('signup.html')
@@ -50,7 +50,7 @@ def login():
 		password = request.form.get('userpass')
 		cur.execute("SELECT user_id FROM users WHERE useremail LIKE \'{0}\' AND password = \'{1}\'".format(email,password))
 		global user_id
-		user_id = cur.fetchall()[0][0]
+		user_id = cur.fetchall()[0]
 		if (user_id == 4):
 			global admin
 			admin = 1
@@ -77,7 +77,7 @@ def review():
 def productbycompany(companyx):
 	cur.execute("SELECT company_id from companies where companyname LIKE \'{0}\'".format(companyx)) 
 	id = cur.fetchall()
-	cur.execute("SELECT productname from products where company_id = \'{0}\'".format(id[0][0]))
+	cur.execute("SELECT productname from products where company_id = \'{0}\'".format(id[0]))
 	products_ = cur.fetchall()
 	cur.execute("select companyname from companies")
 	companies_ = cur.fetchall()
@@ -103,7 +103,7 @@ def submit():
 		p_id = cur.fetchall()[0]
 		cur.execute("INSERT INTO reviews(reviewcomment,reviewscore,product_id,user_id) VALUES ('{0}','{1}','{2}','{3}')".format(review,score,p_id,user_id))
 		con.commit()
-		cur.execute("SELECT review_id FROM reviews WHERE reviewcomment LIKE '{0}' AND product_id = '{1}' AND user_id = '{2}'".format(review,p_id[0][0],user_id))
+		cur.execute("SELECT review_id FROM reviews WHERE reviewcomment LIKE '{0}' AND product_id = '{1}' AND user_id = '{2}'".format(review,p_id[0],user_id))
 		r_id = cur.fetchall()
 		filename = secure_filename(imagename.filename)
 		if filename != '':
@@ -112,7 +112,7 @@ def submit():
 			abort(400)
 		imagename.save(os.path.join(app.config['UPLOAD_PATH'], filename))
 		path = os.path.join(app.config['UPLOAD_PATH'], filename)
-		cur.execute("INSERT INTO images(imagestore,review_id,product_id) VALUES('{0}','{1}','{2}')".format(path,r_id[0][0],p_id[0][0]))
+		cur.execute("INSERT INTO images(imagestore,review_id,product_id) VALUES('{0}','{1}','{2}')".format(path,r_id[0],p_id[0]))
 		con.commit()
 		return render_template('success.html')
 		# if db.session.query(Feedback).filter(Feedback.customer == customer).count() == 0:
@@ -153,7 +153,7 @@ def addpr():
 		else:
 			cur.execute("SELECT company_id FROM companies WHERE companyname LIKE \'{0}\'".format(companyname))
 			id = cur.fetchall()
-			cur.execute("INSERT INTO products(productname,company_id) VALUES('{0}','{1}')".format(productname,id[0][0]))
+			cur.execute("INSERT INTO products(productname,company_id) VALUES('{0}','{1}')".format(productname,id[0]))
 			con.commit()
 			global admin
 			return redirect(url_for('dashboard',admin=admin))
