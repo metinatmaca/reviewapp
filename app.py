@@ -99,7 +99,7 @@ def submit():
 			products_ = cur.fetchall()
 			return render_template('review.html', message='Please enter required fields',companies = companies_ , products = products_)
 		#todo: check if exists
-		cur.execute("SELECT product_id FROM products WHERE productname LIKE \'{0}\'".format(product))
+		cur.execute("SELECT product_id FROM products WHERE productname LIKE '{0}'".format(product))
 		p_id = cur.fetchall()[0][0]
 		cur.execute("INSERT INTO reviews(reviewcomment,reviewscore,product_id,user_id) VALUES ('{0}','{1}','{2}','{3}')".format(review,score,p_id,user_id))
 		con.commit()
