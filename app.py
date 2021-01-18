@@ -50,12 +50,13 @@ def login():
 		password = request.form.get('userpass')
 		cur.execute("SELECT user_id FROM users WHERE useremail LIKE \'{0}\' AND password = \'{1}\'".format(email,password))
 		global user_id
-		user_id = cur.fetchall()[0][0]
-		if (user_id == 4):
-			global admin
-			admin = 1
-		if(user_id != 0):
-			return redirect(url_for('dashboard',admin=admin))
+		user_id = cur.fetchall()
+		if(!user_id):
+			if (user_id == 4):
+				global admin
+				admin = 1
+			if(user_id != 0):
+				return redirect(url_for('dashboard',admin=admin))
 		return render_template('login.html')
 	return render_template('login.html')
 @app.route('/dashboard')
