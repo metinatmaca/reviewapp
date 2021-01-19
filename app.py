@@ -168,7 +168,7 @@ def logout():
 	user_id = 0
 	admin = 0
 	return redirect(url_for('signup'))
-@app.route('/deleteuser',methods=['GET','POST']):
+@app.route('/deleteuser',methods=['GET','POST'])
 def deleteuser():
 	if(method=='POST'):
 		useremail = request.form['user']
