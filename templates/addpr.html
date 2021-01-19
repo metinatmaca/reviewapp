@@ -8,6 +8,7 @@
     <title>Add page</title>
   </head>
   <body>
+	  {%if user%}
     <div class="container">
       <a href="/dashboard"><img src="../static/logo.png" alt="" class="logo" /></a>
      <a href="/review">Make a review</a><br>
@@ -33,5 +34,9 @@
       <br><br><br><br>
     <hr>
     <a href ="/logout"><h2>Log out</h2></a>
+    {%else%}
+    <a href="/"><img src="../static/logo.png" alt="" class="logo" /></a>
+    <h3>You are not logged in.</h3>
+    {%endif%}
   </body>
 </html>

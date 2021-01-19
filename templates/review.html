@@ -9,6 +9,7 @@
   </head>
   <body>
     <div class="container">
+		{%if user%}
       <a href ="/dashboard"><img src="../static/logo.png" alt="Logo" class="logo"/></a>
       {% if message %}
       <p class="message">{{ message | safe }}</p>
@@ -71,5 +72,9 @@
 			window.location =elm.value;
 		}
     </script>
+    {%else%}
+    <a href="/"><img src="../static/logo.png" alt="" class="logo" /></a>
+    <h3>You are not logged in.</h3>
+    {%endif%}
   </body>
 </html>

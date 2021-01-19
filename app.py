@@ -65,15 +65,17 @@ def dashboard():
 	cur.execute("SELECT reviewcomment,reviewscore,users.name,users.surname,products.productname,products.productscore,companies.companyname,companies.companyscore FROM Reviews JOIN users ON reviews.user_id=users.user_id JOIN products ON reviews.product_id = products.product_id JOIN companies ON companies.company_id = products.company_id;")
 	rlist = cur.fetchall()
 	global admin
-	return render_template('dashboard.html',reviews = rlist,admin = admin)
+	global user_id
+	return render_template('dashboard.html',reviews = rlist,admin = admin,user = user_id)
 	
 @app.route('/review')
 def review():
+	global user_id
 	cur.execute("select companyname from companies")
 	companies_ = cur.fetchall()
 	cur.execute("select productname from products")
 	products_ = cur.fetchall()
-	return render_template('review.html', companies = companies_ , products = products_)
+	return render_template('review.html', companies = companies_ , products = products_,user=user_id)
 	
 @app.route('/<companyx>')
 def productbycompany(companyx):
@@ -88,6 +90,7 @@ def productbycompany(companyx):
 
 @app.route('/submit', methods=['POST'])
 def submit():
+	global user_id
 	if request.method == 'POST':
 		company = request.form.get('brand')
 		product_ = request.form.get('product')
@@ -102,7 +105,6 @@ def submit():
 			return render_template('review.html', message='Please enter required fields',companies = companies_ , products = products_)
 		cur.execute("SELECT product_id FROM products WHERE productname ILIKE '%s'"%(product_))
 		p_id = cur.fetchall()
-		global user_id
 		cur.execute("INSERT INTO reviews(reviewcomment,reviewscore,product_id,user_id) VALUES ('{0}','{1}','{2}','{3}')".format(review,score,p_id[0][0],user_id))
 		con.commit()
 		cur.execute("SELECT review_id FROM reviews WHERE reviewcomment LIKE \'{0}\' AND product_id = '{1}' AND user_id = '{2}'".format(review,p_id[0][0],user_id))
@@ -141,7 +143,7 @@ def submit():
 			path = os.path.join(app.config['UPLOAD_PATH'], filename)
 			cur.execute("INSERT INTO images(imagestore,review_id,product_id) VALUES('{0}','{1}','{2}')".format(path,r_id[0][0],p_id[0][0]))
 			con.commit()
-		return render_template('success.html')
+		return render_template('success.html',user=user_id)
 @app.route('/add',methods=['GET','POST'])
 def add():
 	if request.method == 'POST':
@@ -158,7 +160,8 @@ def add():
 			cur.execute("UPDATE companies SET companyscore = '0' WHERE companyemail = '{0}'".format(companyemail))
 			global admin
 			return redirect(url_for('dashboard',admin=admin))
-	return render_template('add.html')
+	global user_id
+	return render_template('add.html',user=user_id)
 @app.route('/addpr',methods=['GET','POST'])
 def addpr():
 	if request.method == 'POST':
@@ -181,7 +184,8 @@ def addpr():
 			return redirect(url_for('dashboard',admin=admin))
 	cur.execute("select companyname from companies")
 	companies_ = cur.fetchall()
-	return render_template('addpr.html',companies = companies_)
+	global user_id
+	return render_template('addpr.html',companies = companies_,user=user_id)
 @app.route('/logout')
 def logout():
 	global user_id
@@ -199,7 +203,8 @@ def deleteuser():
 		return redirect(url_for('dashboard',admin=admin))
 	cur.execute("SELECT useremail FROM users")
 	emails = cur.fetchall()
-	return render_template('deleteuser.html',users = emails)
+	global user_id
+	return render_template('deleteuser.html',users = emails,usercheck = user_id)
 @app.route('/deletecompany',methods=['GET','POST'])
 def deletecompany():
 	if(request.method=='POST'):
@@ -210,7 +215,8 @@ def deletecompany():
 		return redirect(url_for('dashboard',admin=admin))
 	cur.execute("SELECT companyemail FROM companies")
 	emails = cur.fetchall()
-	return render_template('deletecompany.html',companies = emails)
+	global user_id
+	return render_template('deletecompany.html',companies = emails,usercheck = user_id)
 @app.route('/deleteproduct',methods=['GET','POST'])
 def deleteproduct():
 	if(request.method=='POST'):
@@ -221,7 +227,8 @@ def deleteproduct():
 		return redirect(url_for('dashboard',admin=admin))
 	cur.execute("SELECT productname FROM products")
 	productlist = cur.fetchall()
-	return render_template('deleteproduct.html',products = productlist)
+	global user_id
+	return render_template('deleteproduct.html',products = productlist,usercheck = user_id)
 @app.route('/updateuser',methods=['GET','POST'])
 def updateuser():
 	if(request.method=='POST'):
@@ -233,7 +240,8 @@ def updateuser():
 		return redirect(url_for('dashboard',admin=admin))
 	cur.execute("SELECT useremail FROM users")
 	emaillist = cur.fetchall()
-	return render_template('updateuser.html',users = emaillist)
+	global user_id
+	return render_template('updateuser.html',users = emaillist,usercheck=user_id)
 
 @app.route('/updatecompany',methods=['GET','POST'])
 def updatecompany():
@@ -246,7 +254,8 @@ def updatecompany():
 		return redirect(url_for('dashboard',admin=admin))
 	cur.execute("SELECT companyemail FROM companies")
 	emaillist = cur.fetchall()
-	return render_template('updatecompany.html',companies = emaillist)
+	global user_id
+	return render_template('updatecompany.html',companies = emaillist,usercheck = user_id)
 
 @app.route('/updateproduct',methods=['GET','POST'])
 def updateproduct():
@@ -259,7 +268,8 @@ def updateproduct():
 		return redirect(url_for('dashboard',admin=admin))
 	cur.execute("SELECT productname FROM products")
 	productlist = cur.fetchall()
-	return render_template('updateproduct.html',products = productlist)
+	global user_id
+	return render_template('updateproduct.html',products = productlist,usercheck = user_id)
 
 if __name__ == '__main__':
     app.run()
