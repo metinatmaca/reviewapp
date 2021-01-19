@@ -131,7 +131,6 @@ def add():
 		companypw = request.form['companypw']
 		cur.execute("SELECT company_id FROM companies WHERE companyname LIKE \'{0}\' OR companyemail LIKE \'{1}\'".format(companyname,companyemail))
 		id = cur.fetchall()
-		print(id)
 		if id:
 			return render_template('add.html',message ="Already exists")
 		else:
@@ -167,7 +166,7 @@ def logout():
 	global admin
 	user_id = 0
 	admin = 0
-	return redirect(url_for(signup))
+	return redirect(url_for('signup'))
 
 if __name__ == '__main__':
     app.run()
