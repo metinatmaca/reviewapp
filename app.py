@@ -99,7 +99,7 @@ def submit():
 			products_ = cur.fetchall()
 			return render_template('review.html', message='Please enter required fields',companies = companies_ , products = products_)
 		#todo: check if exists
-		cur.execute("SELECT product_id FROM products WHERE productname ILIKE %s"%(product_))
+		cur.execute("SELECT product_id FROM products WHERE productname ILIKE '%s'"%(product_))
 		p_id = cur.fetchall()
 		global user_id
 		if(p_id):
