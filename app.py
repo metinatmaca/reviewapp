@@ -101,6 +101,7 @@ def submit():
 		#todo: check if exists
 		cur.execute("SELECT product_id FROM products WHERE productname LIKE \'{0}\'".format(product))
 		p_id = cur.fetchall()
+		print(p_id)
 		global user_id
 		cur.execute("INSERT INTO reviews(reviewcomment,reviewscore,product_id,user_id) VALUES ('{0}','{1}','{2}','{3}')".format(review,score,p_id[0][0],user_id))
 		con.commit()
