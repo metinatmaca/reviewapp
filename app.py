@@ -53,10 +53,9 @@ def login():
 		global user_id
 		user_id = cur.fetchall()
 		if(user_id):
-			if (user_id == 4):
+			if (user_id[0][0] == 4):
 				admin = 1
-			if(user_id != 0):
-				return redirect(url_for('dashboard',admin=admin))
+			return redirect(url_for('dashboard',admin=admin))
 		return render_template('login.html')
 	return render_template('login.html')
 @app.route('/dashboard')
