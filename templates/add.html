@@ -16,10 +16,10 @@
      {%endif%}
     <form class = "form-signin" method = "POST" action = "/add">
 		  <h2 class = "form-signin-heading">Add company</h2>
+		  <label for="inputUsername" class="sr-only">Company name</label>
+		<input type="text" id="inputUsername" name ="companyname" class="form-control" required autofocus><br>
 		  <label for="inputUsername" class="sr-only">Company email</label>
 		<input type="email" id="inputUsername" name ="companyemail" class="form-control" required autofocus><br>
-		<label for="inputUsername" class="sr-only">Company name</label>
-		<input type="text" id="inputUsername" name ="companyname" class="form-control" required autofocus><br>
 		<label for="inputEmail" class="sr-only">Company password</label>
 		<input type="password" id="inputEmail" name="companypw" class="form-control" required autofocus><br>
 		  <button class="btn btn-lg btn-primary btn-block" type="submit">Add</button>
