@@ -3,7 +3,7 @@ from werkzeug.utils import secure_filename
 import os
 import psycopg2
 import urllib.parse as urlparse
-
+from decimal import *
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'totallysecretkey'
 app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024
@@ -22,6 +22,7 @@ con = psycopg2.connect(
             user=user,
             password=password,
             host=host,
+            port=port
             )
 
 cur = con.cursor()
@@ -61,10 +62,10 @@ def login():
 	return render_template('login.html')
 @app.route('/dashboard')
 def dashboard():
-	cur.execute("SELECT reviewcomment FROM reviews")
-	reviews = cur.fetchall()
+	cur.execute("SELECT reviewcomment,reviewscore,users.name,users.surname,products.productname,products.productscore,companies.companyname,companies.companyscore FROM Reviews JOIN users ON reviews.user_id=users.user_id JOIN products ON reviews.product_id = products.product_id JOIN companies ON companies.company_id = products.company_id;")
+	rlist = cur.fetchall()
 	global admin
-	return render_template('dashboard.html',reviews = reviews,admin = admin)
+	return render_template('dashboard.html',reviews = rlist,admin = admin)
 	
 @app.route('/review')
 def review():
@@ -106,6 +107,31 @@ def submit():
 		con.commit()
 		cur.execute("SELECT review_id FROM reviews WHERE reviewcomment LIKE \'{0}\' AND product_id = '{1}' AND user_id = '{2}'".format(review,p_id[0][0],user_id))
 		r_id = cur.fetchall()
+		cur.execute("SELECT company_id FROM companies WHERE companyname = '{0}'".format(company))
+		c_id = cur.fetchall()
+		cur.execute("SELECT product_id FROM products WHERE company_id = '{0}'".format(c_id[0][0]))
+		productlist= cur.fetchall()
+		divider=0
+		for r in productlist:
+			cur.execute("SELECT review_id FROM reviews WHERE product_id = '{0}'".format(r[0]))
+			reviewlist=cur.fetchall()
+			for x in reviewlist:
+				divider +=1
+		cur.execute("SELECT companyscore FROM companies WHERE company_id = '{0}'".format(c_id[0][0]))
+		newscore = cur.fetchall()[0][0]
+		newscore = ((newscore*(divider-1)) + Decimal(score))/divider
+		cur.execute("UPDATE companies SET companyscore ='{0}' WHERE company_id ='{1}'".format(newscore,c_id[0][0]))
+		con.commit()
+		cur.execute("SELECT review_id FROM reviews WHERE product_id = '{0}'".format(p_id[0][0]))
+		rlist = cur.fetchall()
+		rdivider = 0
+		for r in rlist:
+			rdivider +=1
+		cur.execute("SELECT productscore FROM products WHERE product_id = '{0}'".format(p_id[0][0]))
+		pscore = cur.fetchall()[0][0]
+		pscore = ((pscore * (rdivider-1)) + Decimal(score))/divider
+		cur.execute("UPDATE products SET productscore = '{0}' WHERE product_id = '{1}'".format(pscore,p_id[0][0]))
+		con.commit()
 		filename = secure_filename(imagename.filename)
 		if filename != '':
 			file_ext = os.path.splitext(filename)[1]
@@ -129,6 +155,7 @@ def add():
 		else:
 			cur.execute("INSERT INTO companies(companyname,companyemail,password) VALUES('{0}','{1}','{2}')".format(companyname,companyemail,companypw))
 			con.commit()
+			cur.execute("UPDATE companies SET companyscore = '0' WHERE companyemail = '{0}'".format(companyemail))
 			global admin
 			return redirect(url_for('dashboard',admin=admin))
 	return render_template('add.html')
@@ -147,6 +174,8 @@ def addpr():
 			cur.execute("SELECT company_id FROM companies WHERE companyname LIKE \'{0}\'".format(companyname))
 			id = cur.fetchall()
 			cur.execute("INSERT INTO products(productname,company_id) VALUES('{0}','{1}')".format(productname,id[0][0]))
+			con.commit()
+			cur.execute("UPDATE products SET productscore='0' WHERE productname = '{0}'".format(productname))
 			con.commit()
 			global admin
 			return redirect(url_for('dashboard',admin=admin))

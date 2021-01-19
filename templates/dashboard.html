@@ -23,7 +23,7 @@
      {%endif%}
      <ul>
      {% for x in reviews %}
-		<li>{{x[0]}}</li>
+		<li>Review:{{x[0]}}<br> Review score: {{x[1]}}<br> Made by: {{x[2]}} {{x[3]}}<br> For the product: {{x[4]}}<br>Product's overall score: {{x[5]}}<br> Company: {{x[6]}}<br> Company's overall score: {{x[7]}}<br></li>
 	{%endfor%}
 	</ul>
 	<br>
