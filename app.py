@@ -162,5 +162,13 @@ def addpr():
 	cur.execute("select companyname from companies")
 	companies_ = cur.fetchall()
 	return render_template('addpr.html',companies = companies_)
+@app.route('/logout')
+def logout():
+	global user_id
+	global admin
+	user_id = 0
+	admin = 0
+	return redirect(url_for(signup))
+
 if __name__ == '__main__':
     app.run()
