@@ -51,7 +51,7 @@ def login():
 		password = request.form.get('userpass')
 		cur.execute("SELECT user_id FROM users WHERE useremail LIKE \'{0}\' AND password = \'{1}\'".format(email,password))
 		global user_id
-		user_id = cur.fetchall()
+		user_id = cur.fetchall()[0][0]
 		if(user_id):
 			if (user_id[0][0] == 4):
 				admin = 1
@@ -88,7 +88,7 @@ def productbycompany(companyx):
 def submit():
 	if request.method == 'POST':
 		company = request.form.get('brand')
-		product = request.form.get('product')
+		product_ = request.form.get('product')
 		score = request.form.get('rating')
 		review = request.form.get('review')
 		imagename = request.files['imagename']
@@ -99,7 +99,7 @@ def submit():
 			products_ = cur.fetchall()
 			return render_template('review.html', message='Please enter required fields',companies = companies_ , products = products_)
 		#todo: check if exists
-		cur.execute("SELECT product_id FROM products WHERE productname LIKE \'{0}\'".format(product))
+		cur.execute("SELECT product_id FROM products WHERE productname LIKE \'{0}\'".format(product_))
 		p_id = cur.fetchall()
 		global user_id
 		cur.execute("INSERT INTO reviews(reviewcomment,reviewscore,product_id,user_id) VALUES ('{0}','{1}','{2}','{3}')".format(review,score,p_id,user_id))
