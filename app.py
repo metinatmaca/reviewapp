@@ -102,7 +102,7 @@ def submit():
 		cur.execute("SELECT product_id FROM products WHERE productname ILIKE '{0}'".format(product_))
 		p_id = cur.fetchall()
 		global user_id
-		if(p_id[0]):
+		if(p_id):
 			cur.execute("INSERT INTO reviews(reviewcomment,reviewscore,product_id,user_id) VALUES ('{0}','{1}','{2}','{3}')".format(review,score,p_id[0][0],user_id))
 			con.commit()
 			cur.execute("SELECT review_id FROM reviews WHERE reviewcomment LIKE \'{0}\' AND product_id = '{1}' AND user_id = '{2}'".format(review,p_id[0][0],user_id))
