@@ -53,7 +53,7 @@ def login():
 		global user_id
 		user_id = cur.fetchall()[0][0]
 		if(user_id):
-			if (user_id[0][0] == 4):
+			if (user_id == 4):
 				admin = 1
 			return redirect(url_for('dashboard',admin=admin))
 		return render_template('login.html')
