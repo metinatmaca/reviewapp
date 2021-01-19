@@ -102,22 +102,20 @@ def submit():
 		cur.execute("SELECT product_id FROM products WHERE productname ILIKE '%s'"%(product_))
 		p_id = cur.fetchall()
 		global user_id
-		if(p_id[0][0]):
-			cur.execute("INSERT INTO reviews(reviewcomment,reviewscore,product_id,user_id) VALUES ('{0}','{1}','{2}','{3}')".format(review,score,p_id[0][0],user_id))
+		
+		cur.execute("INSERT INTO reviews(reviewcomment,reviewscore,product_id,user_id) VALUES ('{0}','{1}','{2}','{3}')".format(review,score,p_id[0][0],user_id))
+		con.commit()
+		cur.execute("SELECT review_id FROM reviews WHERE reviewcomment LIKE \'{0}\' AND product_id = '{1}' AND user_id = '{2}'".format(review,p_id[0][0],user_id))
+		r_id = cur.fetchall()
+		filename = secure_filename(imagename.filename)
+		if filename != '':
+			file_ext = os.path.splitext(filename)[1]
+			if file_ext not in app.config['UPLOAD_EXTENSIONS']:
+				return render_template('success.html')
+			imagename.save(os.path.join(app.config['UPLOAD_PATH'], filename))
+			path = os.path.join(app.config['UPLOAD_PATH'], filename)
+			cur.execute("INSERT INTO images(imagestore,review_id,product_id) VALUES('{0}','{1}','{2}')".format(path,r_id[0][0],p_id[0][0]))
 			con.commit()
-			cur.execute("SELECT review_id FROM reviews WHERE reviewcomment LIKE \'{0}\' AND product_id = '{1}' AND user_id = '{2}'".format(review,p_id[0][0],user_id))
-			r_id = cur.fetchall()
-			filename = secure_filename(imagename.filename)
-			if filename != '':
-				file_ext = os.path.splitext(filename)[1]
-				if file_ext not in app.config['UPLOAD_EXTENSIONS']:
-					return render_template('success.html')
-				imagename.save(os.path.join(app.config['UPLOAD_PATH'], filename))
-				path = os.path.join(app.config['UPLOAD_PATH'], filename)
-				cur.execute("INSERT INTO images(imagestore,review_id,product_id) VALUES('{0}','{1}','{2}')".format(path,r_id[0][0],p_id[0][0]))
-				con.commit()
-		else:
-			return render_template('review.html',message = 'shitbag')
 		return render_template('success.html')
 		# if db.session.query(Feedback).filter(Feedback.customer == customer).count() == 0:
 			# data = Feedback(customer, dealer, rating, comments)
