@@ -168,6 +168,15 @@ def logout():
 	user_id = 0
 	admin = 0
 	return redirect(url_for('signup'))
+@app.route('/deleteuser',methods=['GET','POST']):
+def deleteuser():
+	if(method=='POST'):
+		useremail = request.form['user']
+		cur.execute("DELETE FROM users WHERE useremail = '{0}'".format(useremail))
+		con.commit()
+		global admin
+		return redirect(url_for('dashboard',admin=admin))
+	return render_template('deleteuser.html')
 
 if __name__ == '__main__':
     app.run()
