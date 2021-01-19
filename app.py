@@ -22,7 +22,6 @@ con = psycopg2.connect(
             user=user,
             password=password,
             host=host,
-            port=port
             )
 
 cur = con.cursor()
@@ -51,7 +50,9 @@ def login():
 		password = request.form.get('userpass')
 		cur.execute("SELECT user_id FROM users WHERE useremail LIKE \'{0}\' AND password = \'{1}\'".format(email,password))
 		global user_id
-		user_id = cur.fetchall()[0][0]
+		u_id = cur.fetchall()
+		if(u_id):
+			user_id = u_id[0][0]
 		if(user_id):
 			if (user_id == 4):
 				admin = 1
@@ -98,11 +99,9 @@ def submit():
 			cur.execute("select productname from products")
 			products_ = cur.fetchall()
 			return render_template('review.html', message='Please enter required fields',companies = companies_ , products = products_)
-		#todo: check if exists
 		cur.execute("SELECT product_id FROM products WHERE productname ILIKE '%s'"%(product_))
 		p_id = cur.fetchall()
 		global user_id
-		
 		cur.execute("INSERT INTO reviews(reviewcomment,reviewscore,product_id,user_id) VALUES ('{0}','{1}','{2}','{3}')".format(review,score,p_id[0][0],user_id))
 		con.commit()
 		cur.execute("SELECT review_id FROM reviews WHERE reviewcomment LIKE \'{0}\' AND product_id = '{1}' AND user_id = '{2}'".format(review,p_id[0][0],user_id))
@@ -117,13 +116,6 @@ def submit():
 			cur.execute("INSERT INTO images(imagestore,review_id,product_id) VALUES('{0}','{1}','{2}')".format(path,r_id[0][0],p_id[0][0]))
 			con.commit()
 		return render_template('success.html')
-		# if db.session.query(Feedback).filter(Feedback.customer == customer).count() == 0:
-			# data = Feedback(customer, dealer, rating, comments)
-			# db.session.add(data)
-			# db.session.commit()
-			# send_mail(customer, dealer, rating, comments)
-			# return render_template('success.html')
-		# return render_template('index.html', message='You have already submitted feedback')
 @app.route('/add',methods=['GET','POST'])
 def add():
 	if request.method == 'POST':
@@ -170,7 +162,7 @@ def logout():
 	return redirect(url_for('signup'))
 @app.route('/deleteuser',methods=['GET','POST'])
 def deleteuser():
-	if(method=='POST'):
+	if(request.method=='POST'):
 		useremail = request.form['user']
 		cur.execute("DELETE FROM users WHERE useremail = '{0}'".format(useremail))
 		con.commit()
@@ -179,6 +171,66 @@ def deleteuser():
 	cur.execute("SELECT useremail FROM users")
 	emails = cur.fetchall()
 	return render_template('deleteuser.html',users = emails)
+@app.route('/deletecompany',methods=['GET','POST'])
+def deletecompany():
+	if(request.method=='POST'):
+		companyemail = request.form['company']
+		cur.execute("DELETE FROM companies WHERE companyemail = '{0}'".format(companyemail))
+		con.commit()
+		global admin
+		return redirect(url_for('dashboard',admin=admin))
+	cur.execute("SELECT companyemail FROM companies")
+	emails = cur.fetchall()
+	return render_template('deletecompany.html',companies = emails)
+@app.route('/deleteproduct',methods=['GET','POST'])
+def deleteproduct():
+	if(request.method=='POST'):
+		product = request.form['product']
+		cur.execute("DELETE FROM products WHERE productname = '{0}'".format(product))
+		con.commit()
+		global admin
+		return redirect(url_for('dashboard',admin=admin))
+	cur.execute("SELECT productname FROM products")
+	productlist = cur.fetchall()
+	return render_template('deleteproduct.html',products = productlist)
+@app.route('/updateuser',methods=['GET','POST'])
+def updateuser():
+	if(request.method=='POST'):
+		useremail = request.form['user']
+		newemail = request.form['email']
+		cur.execute("UPDATE users SET useremail = '{0}' WHERE useremail = '{1}'".format(newemail,useremail))
+		con.commit()
+		global admin
+		return redirect(url_for('dashboard',admin=admin))
+	cur.execute("SELECT useremail FROM users")
+	emaillist = cur.fetchall()
+	return render_template('updateuser.html',users = emaillist)
+
+@app.route('/updatecompany',methods=['GET','POST'])
+def updatecompany():
+	if(request.method=='POST'):
+		companyemail = request.form['company']
+		newemail = request.form['email']
+		cur.execute("UPDATE companies SET companyemail = '{0}' WHERE companyemail = '{1}'".format(newemail,companyemail))
+		con.commit()
+		global admin
+		return redirect(url_for('dashboard',admin=admin))
+	cur.execute("SELECT companyemail FROM companies")
+	emaillist = cur.fetchall()
+	return render_template('updatecompany.html',companies = emaillist)
+
+@app.route('/updateproduct',methods=['GET','POST'])
+def updateproduct():
+	if(request.method=='POST'):
+		productname = request.form['product']
+		newname = request.form['name']
+		cur.execute("UPDATE products SET productname = '{0}' WHERE productname = '{1}'".format(newname,productname))
+		con.commit()
+		global admin
+		return redirect(url_for('dashboard',admin=admin))
+	cur.execute("SELECT productname FROM products")
+	productlist = cur.fetchall()
+	return render_template('updateproduct.html',products = productlist)
 
 if __name__ == '__main__':
     app.run()
