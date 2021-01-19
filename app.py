@@ -92,7 +92,7 @@ def submit():
 		score = request.form.get('rating')
 		review = request.form.get('review')
 		imagename = request.files['imagename']
-		if company == '' or product == '':
+		if company == '' or product_ == '':
 			cur.execute("select companyname from companies")
 			companies_ = cur.fetchall()
 			cur.execute("select productname from products")
