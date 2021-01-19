@@ -45,6 +45,7 @@ def signup():
 	return render_template('signup.html')
 @app.route('/login',methods=['GET','POST'])
 def login():
+	global admin
 	if(request.method == 'POST'):
 		email = request.form.get('userem')
 		password = request.form.get('userpass')
@@ -53,7 +54,7 @@ def login():
 		user_id = cur.fetchall()
 		if(user_id):
 			if (user_id == 4):
-				global admin = 1
+				admin = 1
 			if(user_id != 0):
 				return redirect(url_for('dashboard',admin=admin))
 		return render_template('login.html')
