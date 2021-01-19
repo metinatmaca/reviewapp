@@ -87,10 +87,10 @@ def productbycompany(companyx):
 @app.route('/submit', methods=['POST'])
 def submit():
 	if request.method == 'POST':
-		company = request.form['brand']
-		product = request.form['product']
-		score = request.form['rating']
-		review = request.form['review']
+		company = request.form.get('brand')
+		product = request.form.get('product')
+		score = request.form.get('rating')
+		review = request.form.get('review')
 		imagename = request.files['imagename']
 		if company == '' or product == '':
 			cur.execute("select companyname from companies")
