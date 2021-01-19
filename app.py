@@ -176,7 +176,9 @@ def deleteuser():
 		con.commit()
 		global admin
 		return redirect(url_for('dashboard',admin=admin))
-	return render_template('deleteuser.html')
+	cur.execute("SELECT useremail FROM users")
+	emails = cur.fetchall()
+	return render_template('deleteuser.html',users = emails)
 
 if __name__ == '__main__':
     app.run()
